@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>agent-feedback — apps that improve every time an AI uses them</title>
+  <meta name="description" content="A tiny universal protocol that lets LLMs, agents, harnesses, and in-app assistants send improvement tickets back to the apps they use." />
+  <style>
+    :root { --bg:#0b0f0d; --panel:#111a15; --line:#1f3a2c; --text:#e7f5ec; --muted:#9ab4a6; --green:#16a34a; --green2:#4ade80; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif; line-height:1.55; }
+    a { color:var(--green2); } code,pre { font-family:ui-monospace,"SF Mono",Menlo,monospace; }
+    .wrap { max-width:760px; margin:0 auto; padding:72px 24px; }
+    h1 { font-size:2.6rem; letter-spacing:-.02em; margin:0 0 12px; } h1 em { color:var(--green2); font-style:normal; }
+    .lead { font-size:1.2rem; color:#cfe7d8; }
+    .dot { width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--green2),var(--green));display:inline-block;margin-right:8px;box-shadow:0 0 12px rgba(74,222,128,.6); }
+    pre { background:#06100b; border:1px solid var(--line); border-radius:10px; padding:16px; overflow-x:auto; color:#bfe9cd; font-size:.85rem; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px; margin:18px 0; }
+    h2 { margin-top:40px; } .btn { display:inline-block; padding:11px 20px; background:var(--green); color:#fff; border-radius:9px; text-decoration:none; font-weight:600; }
+    .muted { color:var(--muted); } footer { margin-top:56px; color:var(--muted); border-top:1px solid var(--line); padding-top:24px; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p><span class="dot"></span><strong>agent-feedback</strong></p>
+    <h1>Apps that get better <em>every time an AI uses them.</em></h1>
+    <p class="lead">A tiny, dependency-free protocol that lets LLMs, agents, harnesses, and in-app assistants send
+      <strong>improvement tickets</strong> back to the apps, sites, and tools they use — a missing action, an error,
+      a confusing flow, or an idea.</p>
+    <p><a class="btn" href="https://github.com/philipposk/agent-feedback">View on GitHub →</a></p>
+
+    <h2>The loop</h2>
+    <div class="card muted">
+      An agent uses your app → hits a gap → <code>POST /v1/feedback</code> → ticket store → you fix it → the next agent
+      has a better time. Your app's own assistant <strong>auto-files tickets</strong> too (errors, caught hallucinations,
+      unmet requests), so the loop works even when the visiting agent stays silent.
+    </div>
+
+    <h2>Discover + send (a visiting agent)</h2>
+    <pre>const endpoint = await discoverFeedback("https://someapp.com");
+await sendTicket(endpoint, {
+  app: "someapp", source: "my-agent",
+  kind: "missing_capability",
+  summary: "no way to export results"
+});</pre>
+
+    <h2>Receive (your app)</h2>
+    <pre>// GET /.well-known/agent-feedback.json
+feedbackWellKnown("MyApp", "https://myapp.com/v1/feedback");
+// POST /v1/feedback
+const { status, body } = await receiveTicket(store, "MyApp", await req.json());</pre>
+
+    <p class="muted">Ships a <a href="https://github.com/philipposk/agent-feedback/blob/main/SKILL.md">SKILL.md</a> that tells agents
+      <em>when and how</em> to send tickets, and a <a href="https://github.com/philipposk/agent-feedback/blob/main/PROTOCOL.md">PROTOCOL.md</a> spec.</p>
+
+    <footer>
+      MIT · part of the <a href="https://6x7.gr">6x7.gr</a> family · born from
+      <a href="https://pageassistant.6x7.gr">Page Assistant</a>.
+    </footer>
+  </div>
+</body>
+</html>
